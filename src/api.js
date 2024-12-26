@@ -11,7 +11,7 @@ export async function fetchPlaylistVideos() {
         
         do {
             const response = await fetch(
-                `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=${PLAYLIST_ID}&key=${API_KEY}&pageToken=${nextPageToken}`
+                `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=500&playlistId=${PLAYLIST_ID}&key=${API_KEY}&pageToken=${nextPageToken}`
             );
             
             if (!response.ok) {

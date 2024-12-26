@@ -1,58 +1,51 @@
-export function playVideo(videoId) {
-    const playerContainer = document.getElementById('playerContainer');
-    const player = document.getElementById('player');
-    
-    player.innerHTML = `
-        <iframe 
-            width="560" 
-            height="315" 
-            src="https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1" 
-            title="YouTube video player" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-            id="youtubeIframe"
-            onload="window.handleIframeLoad()"
-            allowfullscreen>
-        </iframe>
-    `;
-    
-    playerContainer.classList.remove('hidden');
-}
+let player = null;
 
 export function initializeYouTubePlayer() {
-    // Setup window handler for iframe load
-    window.handleIframeLoad = () => {
-        const iframe = document.getElementById('youtubeIframe');
-        console.log("# iframe loaded")
-        
-        // Listen for messages from the iframe
-        window.addEventListener('message', (event) => {
-            if (event.source !== iframe.contentWindow) return;
-            console.log("# Message", event.data)
-            
-            try {
-                const data = JSON.parse(event.data);
-                if (data.event === 'onStateChange' && data.info === 0) {
-                    // Video ended (state 0)
-                    handleVideoEnd();
-                }
-            } catch (e) {
-                // Ignore parsing errors from other messages
+    try {
+        player = new YT.Player('player', {
+            height: '360',
+            width: '640',
+            playerVars: {
+                'playsinline': 1,
+                'autoplay': 1,
+                'enablejsapi': 1
+            },
+            events: {
+                'onStateChange': onPlayerStateChange
             }
         });
-    };
+    } catch(e) {
+        console.log("# ERR Player", e.message)
+    }
 }
 
-function handleVideoEnd() {
-    // Mark current video as watched
-    const currentIframe = document.getElementById('youtubeIframe');
-    const currentVideoId = new URL(currentIframe.src).pathname.split('/').pop();
-    const checkbox = document.querySelector(`[data-video-id="${currentVideoId}"]`);
-    if (checkbox && !checkbox.checked) {
-        checkbox.click();
+export function playVideo(videoId) {
+    const playerContainer = document.getElementById('playerContainer');
+    playerContainer.classList.remove('hidden');
+    console.log("# player", player)
+    
+    if (player && player.loadVideoById) {
+        player.loadVideoById(videoId);
+    } else {
+        // If player isn't ready yet, retry in 1 second
+        // initializeYouTubePlayer()
+        setTimeout(() => playVideo(videoId), 1000);
     }
+}
 
-    // Find and play next unwatched video
+function onPlayerStateChange(event) {
+    // When video ends (state 0), mark as watched and play next
+    if (event.data === 0) {
+        const videoId = player.getVideoData().video_id;
+        const checkbox = document.querySelector(`[data-video-id="${videoId}"]`);
+        if (checkbox && !checkbox.checked) {
+            checkbox.click();
+        }
+        playNextUnwatched(videoId);
+    }
+}
+
+function playNextUnwatched(currentVideoId) {
     const allVideos = Array.from(document.querySelectorAll('.video-item'))
         .map(item => ({
             id: item.querySelector('.watch-checkbox').dataset.videoId,
