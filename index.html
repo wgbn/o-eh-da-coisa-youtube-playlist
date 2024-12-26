@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Playlist</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Meus Vídeos</h1>
+        
+        <div id="playerContainer" class="player-container hidden">
+            <div id="player"></div>
+        </div>
+
+        <div class="controls">
+            <div class="button-group">
+                <button id="toggleWatched" class="btn">Mostrar Assistidos</button>
+                <button id="markAllWatched" class="btn">Marcar Todos</button>
+                <button id="playFirst" class="btn">Play Primeiro</button>
+            </div>
+            <div class="loading" id="loading">Carregando...</div>
+        </div>
+
+        <div id="videoList" class="video-list"></div>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+</body>
+</html>
