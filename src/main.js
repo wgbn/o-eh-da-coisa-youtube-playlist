@@ -7,7 +7,7 @@ async function initializeApp() {
     loading.style.display = 'block';
 
     try {
-        initializeYouTubePlayer();
+        setTimeout(() => initializeYouTubePlayer(), 3000);
         const videos = await fetchPlaylistVideos();
         const videoList = document.getElementById('videoList');
         
