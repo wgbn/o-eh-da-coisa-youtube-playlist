@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gerenciador de Playlist</title>
-  <script type="module" crossorigin src="assets/index-Cuen4p5v.js"></script>
-  <link rel="stylesheet" crossorigin href="assets/index-CB_1mjE2.css">
+  <script type="module" crossorigin src="/assets/index--SoJhUX0.js"></script>
+  <link rel="stylesheet" crossorigin href="/assets/index-AjLPdG8a.css">
 </head>
 <body>
     <div class="container">
@@ -20,6 +20,14 @@
                 <button id="toggleWatched" class="btn">Mostrar Assistidos</button>
                 <button id="markAllWatched" class="btn">Marcar Todos</button>
                 <button id="playFirst" class="btn">Play Primeiro</button>
+            </div>
+            <div class="button-group">
+                <button id="exportData" class="btn btn-secondary">Exportar Dados</button>
+                <button id="importData" class="btn btn-secondary">Importar Dados</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;">
+            </div>
+            <div class="button-group">
+                <button id="refreshPlaylist" class="btn btn-secondary">Atualizar Playlist</button>
             </div>
             <div class="loading" id="loading">Carregando...</div>
         </div>
