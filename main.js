@@ -1,5 +1,5 @@
 const PLAYLIST_ID = 'PL5DFl3pSRD__6vNCPZXtStCzWsNpy15sW';
-const API_KEY = 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8';
+const API_KEY = '';
 const STORAGE_KEY = 'watchedVideos';
 
 let showingWatched = false;
