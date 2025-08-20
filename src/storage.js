@@ -1,7 +1,7 @@
 import { STORAGE_KEY } from './config.js';
 
 const DB_NAME = 'youtubePlaylistDB';
-const DB_VERSION = 1;
+const DB_VERSION = 2; // Atualizado para corresponder à versão no videoCache.js
 const STORE_NAME = 'watchedVideos';
 
 // Inicializa o banco de dados IndexedDB

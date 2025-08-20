@@ -6,6 +6,34 @@ let watchedVideos = new Set();
 let showingWatched = false;
 let allVideos = [];
 
+/**
+ * Formata uma data para exibição, com tratamento de erro
+ * @param {Date|string} data - Data a ser formatada
+ * @returns {string} Data formatada ou texto alternativo em caso de erro
+ */
+function formatarData(data) {
+    try {
+        // Verifica se é um objeto Date válido
+        if (data instanceof Date && !isNaN(data)) {
+            return data.toLocaleDateString();
+        }
+        
+        // Tenta converter para Date se for uma string
+        if (typeof data === 'string') {
+            const dataObj = new Date(data);
+            if (!isNaN(dataObj)) {
+                return dataObj.toLocaleDateString();
+            }
+        }
+        
+        // Fallback para casos de erro
+        return 'Data não disponível';
+    } catch (error) {
+        console.error('Erro ao formatar data:', error);
+        return 'Data não disponível';
+    }
+}
+
 // Inicializa os vídeos assistidos de forma assíncrona
 async function initializeWatchedVideos() {
     watchedVideos = await getWatchedVideos();
@@ -20,7 +48,7 @@ export function createVideoElement(video) {
         <img src="${video.thumbnail}" alt="${video.title}" class="video-thumbnail">
         <div class="video-info">
             <div class="video-title">${video.title}</div>
-            <div class="video-date">${video.publishedAt.toLocaleDateString()}</div>
+            <div class="video-date">${formatarData(video.publishedAt)}</div>
         </div>
         <input type="checkbox" class="watch-checkbox" 
                data-video-id="${video.id}"
@@ -193,9 +221,54 @@ export function toggleWatchedVideos() {
     });
 }
 
-export function showError(message) {
+/**
+ * Exibe uma mensagem de erro na interface com opção de fechar
+ * @param {string} message - Mensagem de erro
+ * @param {Object} options - Opções adicionais
+ * @param {string} options.tipo - Tipo de erro (api, cache, rede, etc)
+ * @param {number} options.codigo - Código de erro, se aplicável
+ * @param {string} options.solucao - Sugestão de solução, se disponível
+ */
+export function showError(message, options = {}) {
+    // Remove qualquer erro existente
+    const existingError = document.querySelector('.error-message');
+    if (existingError) {
+        existingError.remove();
+    }
+    
     const errorDiv = document.createElement('div');
     errorDiv.className = 'error-message';
-    errorDiv.textContent = message;
+    
+    // Cria o conteúdo do erro com título e botão de fechar
+    let errorContent = `
+        <div class="error-header">
+            <h3>Erro${options.codigo ? ` (${options.codigo})` : ''}</h3>
+            <button class="close-error">×</button>
+        </div>
+        <div class="error-body">
+            <p>${message}</p>
+    `;
+    
+    // Adiciona informações adicionais se disponíveis
+    if (options.tipo) {
+        errorContent += `<p class="error-type">Tipo: ${options.tipo}</p>`;
+    }
+    
+    if (options.solucao) {
+        errorContent += `<p class="error-solution"><strong>Solução sugerida:</strong> ${options.solucao}</p>`;
+    }
+    
+    errorContent += '</div>';
+    errorDiv.innerHTML = errorContent;
+    
     document.querySelector('.container').appendChild(errorDiv);
+    
+    // Adiciona evento para fechar o erro
+    errorDiv.querySelector('.close-error').addEventListener('click', () => {
+        errorDiv.classList.add('fade-out');
+        setTimeout(() => errorDiv.remove(), 500);
+    });
+    
+    // Adiciona classe para animação de entrada
+    setTimeout(() => errorDiv.classList.add('show'), 10);
 }
